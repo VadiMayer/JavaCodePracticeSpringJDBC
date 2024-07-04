@@ -2,6 +2,7 @@ package com.example.springjdbc.repository;
 
 import com.example.springjdbc.model.Book;
 import lombok.AllArgsConstructor;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -13,18 +14,23 @@ public class BookRepository {
     private JdbcTemplate jdbcTemplate;
 
     public List<Book> get() {
-        return jdbcTemplate.query("SELECT * FROM Books");
+        return jdbcTemplate.query("SELECT * FROM Books", new BeanPropertyRowMapper<>(Book.class));
     }
 
     public Book get(int id) {
-        return jdbcTemplate.query("SELECT * FROM Books WHERE id=" + id);
+        return jdbcTemplate.query("SELECT * FROM Books WHERE id=?", new Object[]{id}, new BeanPropertyRowMapper<>(Book.class))
+                .stream().findAny().orElse(null);
     }
 
-    public Book create(Book book) {
-        return jdbcTemplate.query("INSERT INTO VALUES");
+    public Book save(Book book) {
+        return jdbcTemplate.update("INSERT INTO Books VALUES(1, ?, ?, ?)", book.getTitle(), book.getAuthor(), book.getPublicationYear());
+    }
+
+    public Book update(Book book) {
+        return jdbcTemplate.update("UPDATE Books SET title=?, auther=?, publicationYear=? WHERE id=?", book.getTitle(), book.getAuthor(), book.getPublicationYear(), book.getId());
     }
 
     public boolean delete(int id) {
-        return jdbcTemplate.query("DELETE FROM Books WHERE id" + id);
+        return jdbcTemplate.update("DELETE FROM Books WHERE id=?", id);
     }
 }
