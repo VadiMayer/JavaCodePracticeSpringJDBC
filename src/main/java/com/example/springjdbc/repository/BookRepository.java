@@ -22,15 +22,15 @@ public class BookRepository {
                 .stream().findAny().orElse(null);
     }
 
-    public Book save(Book book) {
+    public int save(Book book) {
         return jdbcTemplate.update("INSERT INTO Books VALUES(1, ?, ?, ?)", book.getTitle(), book.getAuthor(), book.getPublicationYear());
     }
 
-    public Book update(Book book) {
+    public int update(Book book) {
         return jdbcTemplate.update("UPDATE Books SET title=?, auther=?, publicationYear=? WHERE id=?", book.getTitle(), book.getAuthor(), book.getPublicationYear(), book.getId());
     }
 
-    public boolean delete(int id) {
+    public int delete(int id) {
         return jdbcTemplate.update("DELETE FROM Books WHERE id=?", id);
     }
 }
