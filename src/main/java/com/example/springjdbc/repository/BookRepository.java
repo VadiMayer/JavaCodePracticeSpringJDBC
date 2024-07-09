@@ -27,7 +27,7 @@ public class BookRepository {
     }
 
     public int update(Book book) {
-        return jdbcTemplate.update("UPDATE Books SET title=?, auther=?, publicationYear=? WHERE id=?", book.getTitle(), book.getAuthor(), book.getPublicationYear(), book.getId());
+        return jdbcTemplate.update("UPDATE Books SET title=?, author=?, publicationYear=? WHERE id=?", book.getTitle(), book.getAuthor(), book.getPublicationYear(), book.getId());
     }
 
     public int delete(int id) {
