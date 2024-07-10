@@ -3,6 +3,7 @@ package com.example.springjdbc.controller;
 import com.example.springjdbc.model.Book;
 import com.example.springjdbc.repository.BookRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,8 +19,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -40,6 +41,7 @@ class BookControllerTest {
     void setUp() {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         for (int i = 0; i < 3; i++) {
             bookRepository.save(new Book(i + 1, "title" + (i + 1), "author" + (i + 1), LocalDate.of(2024, 7, 9 - i)));
         }
@@ -58,7 +60,16 @@ class BookControllerTest {
     }
 
     @Test
-    void create() {
+    void create() throws Exception {
+        Book book = bookRepository.get(0);
+        mvc.perform(post("/books/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(book)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(book.getId()))
+                .andExpect(jsonPath("$.title").value(book.getTitle()))
+                .andExpect(jsonPath("$.author").value(book.getAuthor()))
+                .andExpect(jsonPath("$.publicationYear").value(book.getPublicationYear()));
     }
 
     @Test
