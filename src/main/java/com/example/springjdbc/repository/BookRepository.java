@@ -23,11 +23,13 @@ public class BookRepository {
     }
 
     public int save(Book book) {
-        return jdbcTemplate.update("INSERT INTO Books VALUES(1, ?, ?, ?)", book.getTitle(), book.getAuthor(), book.getPublicationYear());
+        return jdbcTemplate.update("INSERT INTO Books (title, author, publicationYear) VALUES(?, ?, ?)",
+                book.getTitle(), book.getAuthor(), book.getPublicationYear());
     }
 
     public int update(Book book) {
-        return jdbcTemplate.update("UPDATE Books SET title=?, author=?, publicationYear=? WHERE id=?", book.getTitle(), book.getAuthor(), book.getPublicationYear(), book.getId());
+        return jdbcTemplate.update("UPDATE Books SET title=?, author=?, publicationYear=? WHERE id=?",
+                book.getTitle(), book.getAuthor(), book.getPublicationYear(), book.getId());
     }
 
     public int delete(int id) {
