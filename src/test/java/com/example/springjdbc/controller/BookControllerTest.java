@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -61,15 +60,15 @@ class BookControllerTest {
 
     @Test
     void create() throws Exception {
-        Book book = bookRepository.get(0);
-        mvc.perform(post("/books/")
+        Book book = bookRepository.get(1);
+        mvc.perform(post("/books")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(book)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(book.getId()))
+                .andExpect(jsonPath("$.id").value(book.getId() + 3))
                 .andExpect(jsonPath("$.title").value(book.getTitle()))
                 .andExpect(jsonPath("$.author").value(book.getAuthor()))
-                .andExpect(jsonPath("$.publicationYear").value(book.getPublicationYear()));
+                .andExpect(jsonPath("$.publicationYear").value(book.getPublicationYear().toString()));
     }
 
     @Test

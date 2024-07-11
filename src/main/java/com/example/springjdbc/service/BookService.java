@@ -22,7 +22,7 @@ public class BookService {
         return bookRepository.get(id);
     }
 
-    public int create(Book book) {
+    public Book create(Book book) {
         return bookRepository.save(book);
     }
 

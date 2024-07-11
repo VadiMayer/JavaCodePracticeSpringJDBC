@@ -4,9 +4,14 @@ import com.example.springjdbc.model.Book;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 @AllArgsConstructor
@@ -22,9 +27,20 @@ public class BookRepository {
                 .stream().findAny().orElse(null);
     }
 
-    public int save(Book book) {
-        return jdbcTemplate.update("INSERT INTO Books (title, author, publicationYear) VALUES(?, ?, ?)",
-                book.getTitle(), book.getAuthor(), book.getPublicationYear());
+    public Book save(Book book) {
+        String sql = "INSERT INTO Books (title, author, publicationYear) VALUES(?, ?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
+            ps.setString(1, book.getTitle());
+            ps.setString(2, book.getAuthor());
+            ps.setDate(3, Date.valueOf(book.getPublicationYear()));
+            return ps;
+        }, keyHolder);
+
+        int newBookId = Objects.requireNonNull(keyHolder.getKey()).intValue();
+
+        return get(newBookId);
     }
 
     public int update(Book book) {

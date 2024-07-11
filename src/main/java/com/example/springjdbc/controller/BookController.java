@@ -3,6 +3,7 @@ package com.example.springjdbc.controller;
 import com.example.springjdbc.model.Book;
 import com.example.springjdbc.service.BookService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +25,8 @@ public class BookController {
     }
 
     @PostMapping
-    public int create(@RequestBody Book book) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public Book create(@RequestBody Book book) {
         return bookService.create(book);
     }
 
